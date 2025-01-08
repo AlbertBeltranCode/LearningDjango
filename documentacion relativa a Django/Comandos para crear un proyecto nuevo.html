@@ -1,0 +1,147 @@
+<!-- 1º PREPARATIVOS NECESARIOS -->
+
+<!-- Crear carpeta para el proyecto y entrar en dicha carpeta -->
+<!-- mkdir "nombre_proyecto" -->
+<!-- cd "nombre_proyecto" -->
+
+<!-- Crear entorno virtual de Python -->
+<!-- py -m venv "nombre_del_entorno" -->
+
+<!-- Activar el entorno virtual -->
+<!-- "nombre_del_entorno"\Scripts\activate.bat -->
+
+<!-- Si quieres desactivar el entorno virtual -->
+<!-- deactivate -->
+
+<!-- Instalar django (Importante siempre hacer con el entorno virtual activado ) -->
+<!-- py -m pip install Django -->
+
+<!-- Ver la version de Django Instalada-->
+<!-- django-admin --version -->
+
+<!-- Crear el proyecto de Django dentro de la carpeta del entorno -->
+<!-- django-admin startproject "nombre_proyecto" -->
+
+<!-- Navega a la carpeta del proyecto y ejecuta el siguiente comando para ejecutar el proyecto de Django-->
+<!-- py manage.py runserver -->
+
+<!-- Para poder ver el proyecto en tiempo real en nuestro navegador -->
+<!-- 127.0.0.1:8000 -->
+
+<!-- Para poder parar la ejecución del servidor -->
+<!-- Control + C -->
+
+<!-- Crear una APP dentro de la carpeta del proyecto de Django -->
+<!-- py manage.py startapp ¨nombre_app¨-->
+
+<!-- ///////////////////////////////////////// -->
+
+<!-- 2º PREPARAR EL PROYECTO-->
+
+<!-- Ahora podremos trabajar en nuestra aplicación Django para ello, tendremos que parar la ejecución del servidor,
+acceder a la carpeta de la app y acceder a la carpeta views.py para poder escribir el código de nuestra app -->
+
+<!-- Una vez editado el fichero views.py, tendremos que crear el fichero urls.py en la misma carpeta que views.py dentro de la carpeta de la APP.
+Accedemos al fichero y dentro de este pondremos la ruta de la vista que hemos creado previamente. Ademas tendremos que acceder a
+la carpeta del proyecto de Django y dentro de urls.py de la carpeta del proyecto tendremos que definir el path para que previamente pueda 
+cargarse correctamente en nuestro navegador -->
+
+<!-- Ahora creamos una carpeta llamada templates dentro de la carpeta de la app, dentro de la carpeta templates creamos nuestro fichero html 
+con el contenido deseado -->
+
+<!-- Una vez hecho esto, tenemos que actualizar el fichero de views.py para que cargue correctamente el template del archivo html que hemos creado.
+Y una vez hayamos realizado los cambios necesarios, tendremos que ir al archivo de settings.py y en el apartado Installed_APPS[] 
+tendremos que añadir el nombre de la app -->
+
+<!-- Al hacer esto, podremos desde la carpeta del proyecto de Django ejecutar el siguiente comando (Asegurándonos de tener el entorno virtual activo) -->
+<!-- py manage.py migrate -->
+
+<!-- Una vez hecho esto, podremos ejecutar el comando de inicio del servidor para comprobar que se esta cargando correctamente el archivo html en la ruta especificada-->
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+<!-- 3º CREAR Y TRABAJAR CON UNA TABLA DENTRO DE NUESTRA BASE DE DATOS SQLITE -->
+
+<!-- Ahora podemos crear Django Models o lo que vendría a ser crear una tabla con campos en una base de datos SQLite.-->
+
+<!-- Para ello, tendremos que acceder al fichero models.py en este fichero podremos crear nuestra class (tabla) que queramos y asignarle valores a las columnas de la tabla 
+EJEMPLO:
+class Miembro(models.Model):
+    Nombre = models.CharField(max_length=255)
+    Apellido = models.CharField(max_length=255)
+-->
+
+<!-- Una vez creado el Model, tendremos que hacer Migrate (la migración) para crear la tabla correctamente -->
+<!-- py manage.py makemigrations ¨nombre_de_APP¨-->
+<!-- Django de base crea una carpeta llamada migrations dentro de esta carpeta podremos observar los cambios realizados durante las Migraciones -->
+
+<!-- Ahora tendremos que ejecutar el comando: -->
+<!--          py manage.py migrate            -->  
+<!-- Para que se cree la tabla correctamente en nuestra APP -->
+
+<!-- Como curiosidad: podemos ver la consulta SQL que se realiza ejecutando el siguiente comando: -->
+<!-- py manage.py sqlmigrate Miembro 0001 --> 
+<!-- Simplemente asegúrate de cambiar Miembro por el nombre de tu class -->
+
+<!-- Activar la consola de Python: -->
+<!-- py manage.py shell -->
+
+<!-- Desactivar la consola de Python: -->
+<!-- Control + Z -->
+
+<!-- Importamos la tabla vacía de Miembro (O el nombre que corresponda)-->
+<!-- from miembros.models import Miembro -->
+<!-- Ahora para poder visualizar la tabla Miembro ejecutamos: -->
+<!-- Miembro.object.all() -->
+
+<!-- Ahora para poder insertar un valor dentro de la tabla, tendremos que ejecutar el siguiente comando: -->
+<!--  miembro = Miembro(Nombre='Albert' , Apellido='Beltran') -->
+<!-- miembro.save() -->
+
+<!-- Para poder visualizar el valor que se a insertado dentro de la tabla ejecutaremos: -->
+<!-- Miembro.objects.all().values() (Cambiar Miembro por el nombre que corresponda)-->
+
+<!--En caso de que queramos agregar varios valores a la vez: 
+miembro1 = Miembro(Nombre='Pedro' , Apellido='Giménez')
+miembro2 = Miembro(Nombre='Maria' , Apellido='Martinez')
+miembro3 = Miembro(Nombre='Joaquin' , Apellido='Herrero')
+miembro4 = Miembro(Nombre='Lola' , Apellido='Ramos')
+miembro5 = Miembro(Nombre='Raul' , Apellido='Reís')
+lista_miembros = [miembro1, miembro2, miembro3, miembro4, miembro5]
+for x in lista_miembros:
+    x.save()
+De esta forma, se guardaran todos los valores en la tabla Miembro al agregarlos a la lista y recorrerla con un bucle for
+-->
+
+<!-- Para modificar un valor podremos ejecutar el siguiente comando: -->
+<!-- from miembros.models import Miembro (cambiar miembros y Miembro por los correspondientes a tu proyecto)-->
+<!-- x = Miembro.objects.all()[4] (De esta forma estaremos seleccionando el cuarto valor de la tabla) -->
+<!-- x.Nombre (Nos mostrara el nombre del valor en cuestión)-->
+<!-- Ahora para cambiar el valor, podremos ejecutar:-->
+<!-- x.Nombre = 'NombreDeseado' -->
+<!-- x.save() -->
+
+<!-- Para poder eliminar un registro, podremos ejecutar:-->
+<!-- from miembros.models import Miembro -->
+<!-- x = Miembro.objects.all()[5] (Elegimos el valor numero 5 de nuestra tabla)-->
+<!-- x.delete() -->
+
+<!-- En caso de que queramos añadir campos a la tabla existente tendremos que acceder a models.py y agregar los campos correspondientes de la siguiente forma:-->
+<!-- telefono = models.IntegerField(null=True)
+     fecha_registro = models.DateField(null=True) -->
+
+<!-- Una vez hechas estas modificaciones, tendremos que ejecutar la migración otra vez saliendo de la consola de python-->
+<!-- py manage.py makemigrations miembros -->
+<!-- py manage.py migrate -->
+
+<!-- Ahora para insertar data en los nuevos campos de la tabla: -->
+<!-- primero ejecutamos la consola de python -->
+<!-- py manage.py shell -->
+<!-- from miembros.models import Miembro -->
+<!-- x = Miembro.objects.all()[0] -->
+<!-- x.telefono = 123456789 -->
+<!-- x.fecha_registro = '2025-08-01' -->
+<!-- x.save() -->
+
+<!-- Por ultimo nos aseguraremos de que podemos visualizar los valores de la tabla para comprobar que se ha insertado correctamente -->
+<!-- Miembro.objects.all().values() -->
