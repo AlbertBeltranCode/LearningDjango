@@ -1,0 +1,209 @@
+<!-- En este documento vamos a recoger la información relativa a recoger y mostrar la información en nuestro proyecto-->
+
+<!-- Después de crear los modelos (Models) con la información que queremos en ellos ahora podremos mostrarlos por pantalla en nuestra pagina web -->
+<!-- Primero creamos un fichero .html dentro de templates, con el nombre deseado -->
+<!-- Dentro de este fichero, tendremos que crear una estructura html estándar y en este ejemplo vamos a crear una lista ul con li creados mediante un bucle for
+por cada dato recogido dentro de la tabla en cuestión.  -->
+
+<!-- EJEMPLO 
+
+<ul>
+    {% for x in mismiembros %} 
+        <li>{{ x.Nombre }} {{ x.Apellido }}</li>
+    {% endfor %}
+</ul>
+
+Utilizamos la etiqueta {% %} Para decirle a Django que realice lógica de programación dentro de los brackets. 
+En este caso ejecuta un bucle for que recorre todos los valores de la tabla mismiembros y los muestra en una lista ul como diferentes li.
+-->
+
+<!-- Una vez hemos preparado la template, tendremos que preparar la vista (views.py) para asegurarnos de que se muestre el fichero html que hemos preparado -->
+<!-- Dentro del fichero vies.py en este ejemplo pondremos: -->
+<!--
+from django.http import HttpResponse
+from django.template import loader
+from .models import Miembro
+
+def miembros(request):
+    mismiembros = Miembro.objects.all().values()
+    template = loader.get_template('todos_los_miembros.html')
+    context = {
+        'mismiembros': mismiembros,
+    }
+    return HttpResponse(template.render(context, request))
+-->
+
+<!-- 
+Este fichero de views.py ahora realiza lo siguiente:
+    - Creamos una función llamada miembros.
+    - Creamos el objeto mismiembros que recoge todos los valores de la tabla Miembro.
+    - Creamos el objeto template que recoge el fichero html que hemos creado y preparado.
+    - Creamos el objeto context que recoge el objeto mismiembros.
+    - Devolvemos el objeto HttpResponse que renderiza el template con el objeto context en este caso mismiembros. 
+    (Básicamente recoge la información de la tabla para previamente ser utilizada en nuestra template en el lugar donde hemos indicado que se muestre, en este caso en {% for x in mismiembros %})
+--->
+
+<!-- Ahora podremos ejecutar el servidor para comprobar que se ejecuta correctamente -->
+<!-- py manage.py runserver -->
+
+<!-- ////////////////////////////////////////////////////////////////////////////////////// -->
+
+<!-- AÑADIR ENLACE A OTRA TEMPLATE  -->
+
+<!-- Ahora que ya tenemos funcional la template, vamos a hacerlo un poco mas interesante permitiendo entrar en una vista de cada valor de la tabla 
+al hacer click en cada uno de los diferentes li que estamos creando -->
+
+<!-- Para ello, primero vamos a crear una template en este caso llamada detalles.html -->
+<!-- Dentro de detalles.html mostraremos el nombre, el apellido, el teléfono y la fecha de registro del usuario seleccionado -->
+<!-- Ademas crearemos un enlace a la template anterior -->
+<!-- EJEMPLO:
+<h1>{{ mimiembro.Nombre }} {{ mimiembro.Apellido }}</h1>
+
+<p>Telefono: {{ mimiembro.telefono }}</p>
+<p>Miembro desde: {{ mimiembro.fecha_registro }}</p>
+
+<p>Volver a <a href="/miembros">Miembros</a></p>
+-->
+
+<!-- Ahora debemos preparar la template donde se muestra la lista de miembros, en mi caso todos_los_miembros.html -->
+<!-- Aquí, tendremos que modificar levemente nuestro coligo para que se cree un enlace a la template de detalles.html -->
+<!--
+{% for x in mismiembros %}
+        <li><a href="detalles/{{ x.id }}">{{ x.Nombre }} {{ x.Apellido }}</a></li>
+{% endfor %}
+-->
+<!-- De esta forma, al hacer click en un li estamos mostrando la template de detalles y agregando a la URL el valor del ID del miembro en cuestión -->
+
+<!-- Una vez tenemos todo preparado, tendremos que agregar la función deseada a la vista -->
+<!--
+def detalles(request, id):
+    mimiembro = Miembro.objects.get(id=id)
+    template = loader.get_template('detalles.html')
+    context = {
+        'mimiembro': mimiembro,
+    }
+    return HttpResponse(template.render(context, request))
+-->
+<!-- Esta función detalles recoge el id como un argumento -->
+<!-- Usa el id para localizar el valor correcto dentro de la tabla Miembro -->
+<!-- Carga el template detalles.html -->
+<!-- Crea un objeto que contiene el miembro -->
+<!-- Envía el objeto a la template -->
+<!-- Muestra el html que es representado por el template -->
+
+<!-- Por ultimo debemos asegurarnos de que la URL /detalles/ apunte a la vista correcta, con id como parámetro. -->
+<!--
+urlpatterns = [
+    path('miembros/', views.miembros, name='miembros'),
+    path('miembros/detalles/<int:id>', views.detalles, name='detalles'),
+]
+-->
+
+<!-- /////////////////////////////////////////////////////////////////// -->
+
+<!-- CREAR UNA PARENT TEMPLATE (TEMPLATE PADRE O MAESTRA)-->
+
+<!-- Django proporciona una forma de crear una "plantilla principal" que puede incluir en todas las páginas para hacer las mismas cosas en todas las páginas. -->
+<!-- En este caso, vamos a crear una template llamada maestro.html -->
+<!--
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
+-->
+<!-- La etiqueta del bloque Django dentro del elemento <title> y el elemento <body> Son marcadores de posición 
+que le dicen a Django que reemplace este bloque con contenido de otras fuentes.-->
+
+<!-- Ahora tenemos que modificar el resto de templates para poder utilizar la template maestro.html -->
+<!-- Esto se hace incluyendo la plantilla maestra con la etiqueta {% extends %} e insertando un bloque de título y un bloque de contenido -->
+<!-- Ejemplo de la template todos_los_miembros.html:
+
+{% extends "master.html" %}
+
+{% block title %}
+    Mi club de tenis - Lista de todos los miembros
+{% endblock %}
+
+{% block content %}
+    <h1>Miembros</h1>
+
+    <ul>
+        {% for x in mismiembros %}
+        <li><a href="detalles/{{ x.id }}">{{ x.Nombre }} {{ x.Apellido }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}
+-->
+<!-- De esta forma, estaremos cargando el contenido repetitivo como es la estructura html del fichero maestro.html asi evitaremos redundancia de código -->
+
+
+<!-- /////////////////////////////////////////////////////////////////// -->
+
+<!-- PAGINA PRINCIPAL (MAIN PAGE) -->
+
+<!-- El proyecto necesita una pagina principal ya que la ruta raíz del proyecto no tiene template -->
+<!-- Para ello, vamos a crear main.html -->
+<!-- Creamos una nueva vista dentro de views.py 
+def main(request):
+    template = loader.get_template('main.html')
+    return HttpResponse(template.render())
+-->
+<!-- Añadimos la view main a urls.py -->ç
+<!-- urlpatterns = [
+        path('', views.principal, name='principal'),
+        path('miembros/', views.miembros, name='miembros'),
+        path('miembros/detalles/<int:id>', views.detalles, name='detalles'),
+    ]
+-->
+<!-- Añadimos un enlace en todos_los_miembros para volver a la pagina main -->
+<!-- Dentro de todos_los_miembros.html agregamos: 
+<p><a href="/">Inicio</a></p>
+    Que al pulsarlo nos redirige a la pagina main.
+-->
+
+<!-- //////////////////////////////////////////////////////////////////////////// -->
+
+<!-- COMO PERSONALIZAR EL ERROR 404 CUANDO PONEMOS UNA URL INCORRECTA -->
+
+<!-- Para ello, tendremos que acceder a la carpeta del proyecto, dentro de esta encontraremos el fichero settings.py -->
+<!-- Cambiaremos el debug a False y en este caso permitiremos todos los hosts. En el futuro lo ideal seria que fuera tu dominio -->
+<!-- 
+DEBUG = False
+ALLOWED_HOSTS = ['*']
+-->
+
+<!-- //////////////////////////////////////////////////////////////////////////// -->
+
+<!-- En caso de que queramos hacer testing, necesitaremos crear una vista de testing -->
+<!--
+def testing(request):
+    template = loader.get_template('template.html')
+    context = {
+    'frutas': ['Manzana', 'Banana', 'Cereza'],   
+    }
+    return HttpResponse(template.render(context, request))
+-->
+<!-- Acto seguido tendremos que agregarlo al archivo urls.py -->
+<!-- 
+urlpatterns = [
+    path('', views.main, name='main'),
+    path('members/', views.members, name='members'),
+    path('members/details/<int:id>', views.details, name='details'),
+    path('testing/', views.testing, name='testing'),    
+]
+-->
+<!-- Ahora creamos dentro de templates el fichero templates.html -->
+<!-- Dentro de templates.html cargamos la variable -->
+<!-- 
+{% for x in frutas %}
+    <h1>{{ x }}</h1>
+{% endfor %}
+-->

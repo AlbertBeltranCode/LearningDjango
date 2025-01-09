@@ -1,0 +1,18 @@
+{% extends "maestro.html" %}
+
+{% block title %}
+    Mi club de futbol - Lista de todos los miembros
+{% endblock %}
+
+{% block content %}
+
+    <p><a href="/">Inicio</a></p>
+
+    <h1>Miembros</h1>
+
+    <ul>
+        {% for x in mismiembros %}
+        <li><a href="detalles/{{ x.id }}">{{ x.Nombre }} {{ x.Apellido }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
