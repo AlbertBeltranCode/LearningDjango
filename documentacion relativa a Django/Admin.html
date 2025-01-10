@@ -1,0 +1,53 @@
+<!-- Django Admin permite realizar operaciones CRUD mediante una interfaz de usuario -->
+<!-- Para acceder a este, tenemos que acceder a la ruta -->
+<!-- 127.0.0.1:8000/admin/ -->
+<!-- Ahora en el cmd ejecutamos, con el entorno virtual activado y el servidor Django desactivado: -->
+<!-- py manage.py createsuperuser -->
+<!-- Este comando nos solicitara un nombre de usuario, un email y una contraseña para el super-usuario -->
+<!-- Este usuario nos servirá para acceder al panel de control de admin donde podremos realizar las operaciones CRUD -->
+
+<!-- A continuación tendremos que incluir el Model de Miembro en la interfaz de admin, ya que de base Django no sabe que model quieres que sea visible. -->
+<!-- Para ello, tendremos que acceder en la carpeta de la APP, al archivo llamado admin.py -->
+<!-- En este fichero, registraremos el model que queremos que sea visible -->
+<!--
+from django.contrib import admin
+from .models import Miembro
+
+# Register your models here.
+admin.site.register(Miembro)
+-->
+
+<!-- Ahora, si accedemos a la interfaz de admin, podremos ver la tabla que hemos creado en la base de datos SQLite -->
+<!-- Ahora mismo los valores nos aparecerán sin su valor original, vamos a cambiarlo para que podamos ver los valores reales de la tabla. -->
+<!-- Para ello, accedemos al fichero models.py y definimos una función __srt__() del Model Miembro --> 
+<!--
+from django.db import models
+
+class Miembro(models.Model):
+  Nombre = models.CharField(max_length=255)
+  Apellido = models.CharField(max_length=255)
+  telefono = models.IntegerField(null=True)
+  fecha_registro = models.DateField(null=True)
+
+  def __str__(self):
+    return f"{self.Nombre} {self.Apellido}"
+-->
+
+<!-- De esta forma, ahora podremos vislumbrar los valores del nombre y del apellido dentro de la tabla -->
+<!-- Ahora bien, para poder definir que campos de la tabla queremos mostrar, tendremos que especificarlos en una list_display dentro de admin.py -->
+<!--
+from django.contrib import admin
+from .models import Miembro
+
+# Register your models here.
+class MiembroAdmin(admin.ModelAdmin):
+  list_display = ("Nombre", "Apellido", "fecha_registro",)
+
+admin.site.register(Miembro, MiembroAdmin)
+-->
+
+<!-- Ahora que podemos visualizar correctamente todos los valores de la tabla con los campos definidos, podremos editar los valores, para ello simplemente pulsa
+en el valor a editar y podrás cambiarlo -->
+<!-- Para añadir un nuevo valor, simplemente pulsamos en add Miembro y podremos agregar un nuevo valor a la tabla -->
+<!-- Para eliminar un valor podemos elegir el valor mediante un checkbox, luego en Action: abrimos el desplegable y seleccionamos Delete select miembros 
+o pulsamos en el valor a eliminar y en la pestaña de edición nos permitirá eliminar dicho valor pulsando el botón rojo Delete -->

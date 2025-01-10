@@ -5,3 +5,6 @@ class Miembro(models.Model):
   Apellido = models.CharField(max_length=255)
   telefono = models.IntegerField(null=True)
   fecha_registro = models.DateField(null=True)
+
+  def __str__(self):
+    return f"{self.Nombre} {self.Apellido}"
