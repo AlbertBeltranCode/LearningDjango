@@ -1,0 +1,119 @@
+<!-- En Django, una QuerySet es una colección de datos recogidos de una base de datos -->
+<!-- Un QuerySet se construye como una lista de objetos.-->
+<!-- Los QuerySets nos facilitan la obtención de los datos que realmente necesitamos, permitiendo filtrar y ordenar la información. -->
+
+<!-- En views.py, dentro de la función testing podremos realizar las diferentes Queries de ejemplo -->
+<!--
+from django.http import HttpResponse
+from django.template import loader
+from .models import Miembro
+
+def testing(request):
+    misdatos = Miembro.objects.all()
+    template = loader.get_template('template.html')
+    context = {
+        'mismiembros': misdatos,
+    }
+    return HttpResponse(template.render(context, request))
+-->
+<!-- En este ejemplo estamos recogiendo todos los objetos dentro del model Miembro -->
+<!-- Ahora podríamos utilizar esta Query para generar contenido en una template-->
+<!--
+<table border='1'>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+    </tr>
+    {% for x in mismiembros %}
+        <tr>
+        <td>{{ x.id }}</td>
+        <td>{{ x.Nombre }}</td>
+        <td>{{ x.Apellido }}</td>
+        </tr>
+    {% endfor %}
+</table>
+-->
+
+<!-- Hay diferentes métodos para recoger datos de un model dentro de un QuerySet -->
+<!-- values() -->
+<!-- El método values() , te permite recoger cada objeto como un diccionario de python, con el nombre y los valores como parejas de key/valor -->
+<!-- values_list() -->
+<!-- El método values_list() , te permite devolver unicamente la columna que hayas especificado -->
+<!-- EJEMPLO: misdatos = Miembro.objects.values_list('Nombre') -->
+<!-- filter() -->
+<!-- El método filter te permite devolver una columna/valor especifico -->
+<!-- EJEMPLO: misdatos = Miembro.objects.filter(Nombre='Albert').values()-->
+
+<!-- El método filter nos permite buscar y filtrar a la hora de buscar de forma mas concreta-->
+<!-- El método filter() recibe los argumentos como **kwargs (argumentos de palabra clave), por lo que puedes filtrar por más de un campo separándolos con una coma.-->
+<!-- misdatos = Miembro.objects.filter(Apellido='Beltran', id=2).values() -->
+<!-- Podemos usar múltiples métodos filter(), separados por el carácter de barra vertical |. Los resultados se combinarán en un solo modelo. -->
+<!-- misdatos = Miembro.objects.filter(Nombre='Albert').values() | Miembro.objects.filter(Apellido='Beltran').values() -->
+
+<!-- Otro método común es importar y usar las expresiones Q -->
+<!--
+from django.http import HttpResponse
+from django.template import loader
+from .models import Miembro
+from django.db.models import Q
+
+def testing(request):
+    misdatos = Miembro.objects.filter(Q(Nombre='Albert') | Q(Apellido='Beltran')).values()
+    template = loader.get_template('template.html')
+    context = {
+        'mismiembros': misdatos,
+    }
+    return HttpResponse(template.render(context, request))
+-->
+
+<!-- Field Lookups -->
+<!-- Django tiene su propia forma de especificar sentencias SQL y cláusulas WHERE. -->
+<!-- Para crear cláusulas WHERE específicas en Django, usa "Field lookups". -->
+<!-- Los "Field lookups" son palabras clave que representan términos específicos de SQL. -->
+<!-- EJEMPLO 
+    misdatos = Miembro.objects.filter(Nombre__startswith='A').values()
+-->
+<!-- Esto filtrara la búsqueda para buscar los nombres que empiecen por la letra A-->
+
+<!-- LISTA DE TODAS LAS FIELD LOOKUPS -->
+<!--
+contains - Contiene la frase
+icontains - Igual que contains, pero sin distinguir mayúsculas y minúsculas
+date - Coincide con una fecha
+day - Coincide con un día del mes (1-31) (para fechas)
+endswith - Termina con
+iendswith - Igual que endswith, pero sin distinguir mayúsculas y minúsculas
+exact - Coincidencia exacta
+iexact - Igual que exact, pero sin distinguir mayúsculas y minúsculas
+in - Coincide con uno de los valores
+isnull - Coincide con valores NULL
+gt - Mayor que
+gte - Mayor o igual que
+hour - Coincide con una hora (para datetimes)
+lt - Menor que
+lte - Menor o igual que
+minute - Coincide con un minuto (para datetimes)
+month - Coincide con un mes (para fechas)
+quarter - Coincide con un trimestre del año (1-4) (para fechas)
+range - Coincide con un rango de valores
+regex - Coincide con una expresión regular
+iregex - Igual que regex, pero sin distinguir mayúsculas y minúsculas
+second - Coincide con un segundo (para datetimes)
+startswith - Comienza con
+istartswith - Igual que startswith, pero sin distinguir mayúsculas y minúsculas
+time - Coincide con una hora específica (para datetimes)
+week - Coincide con un número de semana (1-53) (para fechas)
+week_day - Coincide con un día de la semana (1-7), donde 1 es domingo
+iso_week_day - Coincide con un día de la semana en formato ISO 8601 (1-7), donde 1 es lunes
+year - Coincide con un año (para fechas)
+iso_year - Coincide con un año en formato ISO 8601 (para fechas)
+-->
+
+<!-- Para ordenar QuerySets, en Django utilizamos el método order_by() -->
+<!-- misdatos = Miembro.objects.all().order_by('Nombre').values() -->
+<!-- En caso de que queramos ordenarlo en orden descendiente, tendremos que utilizar el símbolo - -->
+<!-- misdatos = Miembro.objects.all().order_by('-Nombre').values()-->
+<!-- En caso de que queramos ordenar varios campos, podemos separarlo mediante una coma -->
+<!-- Ordenamos los resultados primero por nombre ascendente y luego el id descendiente -->
+<!-- misdatos = Miembro.objects.all().order_by('Nombre', '-id').values() -->

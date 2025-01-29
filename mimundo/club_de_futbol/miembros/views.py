@@ -27,8 +27,9 @@ def principal(request):
 
 #Creamos una vista para los test
 def testing(request):
-  template = loader.get_template('template.html')
-  context = {
-    'frutas': ['Manzana', 'Banana', 'Cereza'],   
-  }
-  return HttpResponse(template.render(context, request))
+    misdatos = Miembro.objects.all()
+    template = loader.get_template('template.html')
+    context = {
+        'mismiembros': misdatos,
+    }
+    return HttpResponse(template.render(context, request))

@@ -1,0 +1,413 @@
+<!-- En las templates de Django, puedes renderizar variables introduciéndolas dentro de brackets {{ }} -->
+<!-- Ejemplo practico -->
+<!-- <h1> Bienvenido de vuelta {{ nombreUsuario }}, espero que tengas un buen dia. </h1> -->
+<!-- Ahora enviaríamos dicha variable dentro del context para recogerla en el template, esto lo haríamos dentro de una función en views.py -->
+<!--  def ejemplo(request):
+        template = loader.get_template('template.html')
+        context = {
+            'nombreUsuario': 'Albert',
+        }
+        return HttpResponse(template.render(context, request))
+-->
+<!-- Como se puede ver en el ejemplo, creamos un objeto y le asignamos data, en este caso 'Albert' y lo enviamos como primer parámetro dentro de la función template.render() -->
+<!-- También podemos crear variables directamente en el template, utilizando {% with %} -->
+<!-- La variable estará disponible hasta que aparezca el tag {% endwith %}-->
+<!-- Ejemplo practico -->
+<!--
+{% with nombreUsuario="Tobias" %}
+<h1>Hola {{ nombreUsuario }}, ¿Has comido hoy?</h1>
+{% endwith %}
+-->
+
+<!-- Esto seria una forma razonable de entender como crear y utilizar variables en Django -->
+<!-- Pero normalmente, la mayoría de los datos externos que quieres utilizar en las diferentes templates se recogen de los model -->
+<!-- En mi caso, para recoger data del model Miembro, tendré que importarlo en views.py y extraer la data de este desde la vista. -->
+<!--
+from django.http import HttpResponse, HttpResponseRedirect
+from django.template import loader
+from .models import Miembro
+
+def testing(request):
+    mismiembros = Miembro.objects.all().values()
+    template = loader.get_template('template.html')
+    context = {
+        'mismiembros': mismiembros,
+    }
+    return HttpResponse(template.render(context, request))
+-->
+<!-- En template.html -->
+<!-- 
+<ul>
+    {% for x in mismiembros %}
+<li>{{ x.Nombre }}</li>
+    {% endfor %}
+</ul>
+-->
+
+<!-- En Django, podemos realizar lógica de programación ejecutando if y for dentro de las templates, el nombre asociado a estos son las template tags. -->
+<!-- Para trabajar con template tags, las envolvemos en {%  %} -->
+<!-- Ejemplo Practico -->
+<!-- 
+{% if saludo == 1 %}
+    <h1>Hola</h1>
+{% else %}
+    <h1>Adios</h1>
+{% endif %}
+-->
+<!-- Las template tags son una forma de decirle a Django que viene algo mas que HTML plano -->
+<!-- Nos permiten realizar programación en el servidor antes de enviar el HTML al cliente -->
+<!-- A continuación dejare la lista de todos las template tags -->
+<!-- 
+autoescape - Especifica si el modo de escape automático está activado o desactivado
+block - Especifica una sección de bloque
+comment - Especifica una sección de comentario
+csrf_token - Protege los formularios contra ataques de falsificación de solicitudes entre sitios (CSRF)
+cycle - Especifica contenido para usar en cada ciclo de un bucle
+debug - Especifica información de depuración
+extends - Especifica una plantilla padre
+filter - Filtra el contenido antes de devolverlo
+firstof - Devuelve la primera variable que no esté vacía
+for - Especifica un bucle "for"
+if - Especifica una sentencia condicional "if"
+ifchanged - Se usa en bucles "for". Muestra un bloque solo si un valor ha cambiado desde la última iteración
+include - Especifica contenido o una plantilla incluida
+load - Carga etiquetas de plantilla desde otra biblioteca
+lorem - Genera texto aleatorio
+now - Muestra la fecha y hora actual
+regroup - Agrupa un objeto por una categoría
+resetcycle - Se usa en ciclos. Restablece el ciclo
+spaceless - Elimina los espacios en blanco entre etiquetas HTML
+templatetag - Muestra una etiqueta de plantilla específica
+url - Devuelve la parte absoluta de una URL
+verbatim - Especifica contenido que no debe ser procesado por el motor de plantillas
+widthratio - Calcula un valor de ancho basado en la relación entre un valor dado y un valor máximo
+with - Especifica una variable para usar dentro del bloque
+-->
+
+<!-- Una sentencia "if" evalúa una variable y ejecuta un bloque de código si el valor es verdadero. -->
+<!--
+{% if saludo == 1 %}
+    <h1>Hola</h1>
+{% endif %} 
+-->
+<!-- La palabra clave "elif" dice, "Si la condición previa no es verdadera entonces prueba esta condición "-->
+<!--
+{% if Saludo == 1 %}
+    <h1>Hola</h1>
+{% elif Saludo == 2 %}
+    <h1>Bienvenido</h1>
+{% endif %} 
+-->
+<!-- La palabra clave "else" atrapa todo lo que no se recoja dentro de las opciones previas -->
+<!--
+{% if Saludo == 1 %}
+    <h1>Hola</h1>
+{% elif Saludo == 2 %}
+    <h1>Bienvenido</h1>
+{% else %}
+    <h1>Adios</h1>
+{% endif %} 
+-->
+
+<!-- OPERADORES -->
+<!-- 
+Los ejemplos anteriores utilizan el operador == , que es usado para revisar si una variable es igual a dicho valor, 
+pero hay muchas mas operadores que podemos utilizar, incluso podríamos evadir el operador para revisar si la variable no esta vacía -->
+<!-- 
+{% if Saludo %}
+    <h1>Hola</h1>
+{% endif %} 
+-->
+<!-- 
+== - Es igual que
+!= - Es no igual que
+< - Es menos que
+<= - Es menor o igual que
+> - Es mayor que
+>= - Es mayor o igual que
+and - Para revisar si ambas condiciones son verdaderas
+or - Para revisar si al menos una de las condiciones es verdadera
+and/or - Podemos combinar ambos operadores
+-->
+
+<!-- 
+En Django los paréntesis no están permitidos dentro de if, asi que cuando combinemos los operadores and y or tendremos que tener cuidado de que los paréntesis
+los añadamos al and pero no para el or 
+-->
+<!-- Ejemplo
+        {% if (saludo == 1 and dia == "Viernes") or saludo == 5 %}
+-->
+
+<!--
+in - Para revisar si un valor esta dentro de un objeto
+not in - Para revisar si un valor no esta dentro de un objeto
+is - Para revisar si dos objetos son iguales, == revisa si los valores son iguales y is revisa si los objetos son iguales
+-->
+<!-- Ejemplo -->
+<!--
+En views.py tenemos:
+
+from django.http import HttpResponse
+from django.template import loader
+
+def testing(request):
+    template = loader.get_template('template.html')
+    context = {
+    'x': ['Apple', 'Banana', 'Cherry'], 
+    'y': ['Apple', 'Banana', 'Cherry'], 
+    }
+    return HttpResponse(template.render(context, request)) 
+-->
+<!-- Ejemplo 1 -->
+<!--
+{% if x is y %}
+    <h1>YES</h1>
+{% else %}
+    <h1>NO</h1>
+{% endif %}
+RESULTADO: NO Porque tiene el mismo valor, pero no el mismo objeto
+-->
+<!-- Ejemplo 2 -->
+<!--
+{% if x == y %}
+    h1>YES</h1>
+{% else %}
+    <h1>NO</h1>
+{% endif %}
+RESULTADO: YES Porque tiene el mismo valor, pese a tener diferente objeto
+-->
+<!-- Ejemplo 3 -->
+<!--
+{% with var1=x var2=x %}
+    {% if var1 is var2 %}
+    <h1>YES</h1>
+    {% else %}
+    <h1>NO</h1>
+    {% endif %}
+{% endwith %}
+RESULTADO: YES Porque gracias a crearlo dentro del template mediante with, se convierten en el mismo objeto
+-->
+<!--
+is not - Para revisar si dos objetos no son iguales
+-->
+
+<!-- BUCLES -->
+<!-- En Django podemos crear bucles, gracias a los template tags -->
+<!-- Utilizaremos el bucle for , para iterar dentro de una lista de objetos o un diccionario -->
+<!--
+{% for x in frutas %}
+    <h1>{{ x }}</h1>
+{% endfor %}
+-->
+<!-- Ejemplo de bucle for a traves de una lista de diccionarios -->
+<!--
+{% for x in coches %}
+    <h1>{{ x.marca }}</h1>
+    <p>{{ x.modelo }}</p>
+    <p>{{ x.año }}</p>
+{% endfor %} 
+-->
+
+<!-- Cuando iteramos datos de un model, tenemos que tener en cuenta que es como una tabla, con columnas y filas -->
+<!-- Cuando hacemos un fetch de los datos del model, tenemos que tener en cuenta que viene como si fuera un objeto QuerySet -->
+<!--
+<QuerySet [
+    {
+        'id': 1,
+        'Nombre': 'Emil',
+        'Apellido': 'Refsnes',
+        'telefono': 5551234,
+        'fecha_registro': datetime.date(2022, 1, 5)
+    }
+-->
+<!-- 
+{% for x in miembros %}
+    <h1>{{ x.id }}</h1>
+    <p>
+        {{ x.Nombre }}
+        {{ x.Apellido }}
+    </p>
+{% endfor %} 
+-->
+
+<!-- Tenemos la palabra clave "reversed", que nos permitirá hacer el bucle pero en el orden inverso-->
+<!--
+{% for x in miembros reversed %}
+    <h1>{{ x.id }}</h1>
+    <p>
+        {{ x.Nombre }}
+        {{ x.Apellido }}
+    </p>
+{% endfor %}  
+-->
+<!-- Tenemos la palabra clave "empty", en caso de que quieras hacer algo especial si el objeto esta vacío, cabe destacar que dicho objeto indicas tu que esta vació -->
+<!--
+en views.py 
+context = {
+    'objetoVacioDePrueba': [],
+}
+en template.html
+<ul>
+    {% for x in objetoVacioDePrueba %}
+        <li>{{ x.Nombre }}</li>
+    {% empty %}
+        <li>No hay miembros</li>
+    {% endfor %}
+</ul> 
+-->
+<!--También podemos utilizar la palabra empty si el objeto no existe -->
+<!--
+<ul>
+    {% for x in miObjeto %}
+        <li>{{ x.Nombre }}</li>
+    {% empty %}
+        <li>No hay miembros</li>
+    {% endfor %}
+</ul> 
+-->
+
+<!-- Variables de bucles -->
+<!-- En Django disponemos de diferentes variables para utilizar dentro de bucles for -->
+<!-- 
+forloop.counter
+forloop.counter0
+forloop.first
+forloop.last
+forloop.parentloop
+forloop.revcounter
+forloop.revcounter0
+-->
+
+<!-- forloop.counter -->
+<!-- La iteración actual empezando por el valor 1 -->
+<!--
+<ul>
+    {% for x in frutas %}
+        <li>{{ forloop.counter }}</li>
+    {% endfor %}
+</ul> 
+-->
+
+<!-- forloop.counter0 -->
+<!-- La iteración actual empezando por el valor 0 -->
+<!--
+<ul>
+    {% for x in frutas %}
+        <li>{{ forloop.counter0 }}</li>
+    {% endfor %}
+</ul> 
+-->
+
+<!-- forloop.first -->
+<!-- Te permite testear si el bucle se encuentra en su primera iteración -->
+<!--
+Dibuja un fondo azul en la primera fruta
+<ul>
+    {% for x in frutas %}
+        <li
+        {% if forloop.first %}
+            style='background-color:lightblue;'
+        {% endif %}
+        >{{ x }}</li>
+    {% endfor %}
+</ul> 
+-->
+
+<!-- forloop.last -->
+<!-- Te permite testear si el bucle se encuentra en su ultima iteración -->
+<!--
+Dibuja un fondo azul en la ultima fruta
+<ul>
+    {% for x in frutas %}
+        <li
+        {% if forloop.last %}
+            style='background-color:lightblue;'
+        {% endif %}
+        >{{ x }}</li>
+    {% endfor %}
+</ul> 
+-->
+
+<!-- forloop.revcounter -->
+<!-- La iteración actual comienza desde el final y cuentas hacia atrás, terminando en 1. -->
+<!--
+<ul>
+    {% for x in frutas %}
+        <li>{{ forloop.revcounter }}</li>
+    {% endfor %}
+</ul> 
+-->
+
+<!-- forloop.revcounter0 -->
+<!-- La iteración actual comienza desde el final y cuentas hacia atrás, terminando en 0. -->
+<!--
+<ul>
+    {% for x in frutas %}
+        <li>{{ forloop.revcounter0 }}</li>
+    {% endfor %}
+</ul> 
+-->
+
+<!-- Comentarios en Django -->
+<!-- Los comentarios de Django te permiten tener secciones dentro del código que serán ignoradas -->
+<!--
+<h1>Bienvenidos a todos</h1>
+{% comment %}
+    <h1>Esto se ignora</h1>
+{% endcomment %}
+-->
+<!-- Puedes añadir mensajes a tus comentarios, de esta forma, ayudara a recordar porque has escrito dicho comentario o te servirá para recordar
+como funciona cierta parte de tu código -->
+<!--
+<h1>Bienvenidos a todos</h1>
+{% comment "Esto ahora se ignora porque es un ejemplo de comentario" %}
+    <h1>Esto se ignora</h1>
+{% endcomment %}
+-->
+<!-- En caso de que solo quieras comentar algo, también puedes utilizar los comentarios cortos mediante {# ... #} -->
+<!--
+<h1>Bienvenidos{# Todos#}</h1>
+-->
+<!-- En caso de que quieras realizar comentarios en las vistas, ten en cuenta que las vistas son lenguaje python, por lo que tendrás que crear comentarios con # -->
+
+<!-- INCLUDE -->
+<!-- Dentro de Django, podemos utilizar el tag "include" dentro de una template para incluir el contenido de otra template, de esta forma evitaremos redundancia de código
+de una forma practica, ten en cuenta que si lo cargas sin variables se utiliza comillas simples-->
+<!--
+templates/footer.html:
+<p>Esto es el footer que utilizare en toda mi pagina web.</p>
+-->
+<!--
+templates/template.html:
+
+<h1>Hola</h1>
+
+<p>Esta pagina es la pagina principal.</p>
+
+{% include 'footer.html' %} 
+
+-->
+
+<!-- También puedes enviar variables dentro de las templates utilizando la palabra clave with -->
+<!-- En el include, asegúrate de referirte a las variables utilizando {{ nombreVariable }} -->
+<!--
+templates/mimenu.html:
+
+<div>INICIO | {{ yo }} | SOBRE MI | FORO | {{ patrocinador }}</div>
+-->
+<!--
+templates/template.html:
+
+<!DOCTYPE html>
+<html>
+<body>
+
+{% include "mimenu.html" with yo="ALBERT" patrocinador="W3SCHOOLS" %}
+
+<h1>Bienvenido</h1>
+
+<p>Esta es mi pagina principal</p>
+
+</body>
+</html> 
+-->
