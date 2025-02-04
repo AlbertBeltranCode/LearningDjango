@@ -1,0 +1,63 @@
+<!-- Django viene de base con una base de datos SQLite que esta muy bien para hacer testing y debugging, pero no es exactamente lo que queremos para producción -->
+<!-- En producción, Django nos ofrece diferentes bases de datos -->
+<!--
+PostreSQL
+MariaDB
+MySQL
+Oracle
+-->
+<!-- En nuestro caso elegiremos PostreSQL porque suele ser el estándar de producción de proyectos web con Django -->
+<!-- Para ello, tenemos que instalar un paquete llamado psycopg2 mediante el cmd: -->
+<!-- pip install psycopg2-binary -->
+<!-- Necesitamos el paquete psycopg2 para poder trabajar con PostreSQL en python -->
+<!-- Ademas necesitamos un servidor donde podamos hostear la base de datos-->
+<!-- En nuestro caso utilizaremos Amazon Web Services (AWS)-->
+
+<!-- Amazon Web Services -->
+<!-- Existen muchos proveedores que pueden alojar proyectos Django y bases de datos PostgreSQL. En este proyecto utilizaremos la plataforma Amazon Web Services (AWS), 
+principalmente porque ofrecen una solución gratuita que puede alojar tanto proyectos Django como bases de datos PostgreSQL. Todo lo que necesita es una cuenta de AWS.-->
+<!-- Para esto, ves a aws.amazon.com y regístrate -->
+<!-- Una vez que tenga una cuenta de AWS, puede comenzar a crear una base de datos. -->
+<!-- Usaremos un servicio de base de datos en AWS, llamado RDS. -->
+<!-- En el campo de búsqueda, busque "RDS" y haga clic para iniciar el servicio: -->
+<!-- Dentro del servicio RDS, creamos una base de datos, ya sea navegando a la sección Base de datos o simplemente haciendo clic en el botón "Crear base de datos":-->
+<!-- Ahora dentro del panel de creación elegiremos creación standard, PostreSQL y capa gratuita -->
+<!-- Podemos cambiar el nombre de la base de datos, del usuario maestro y de la contraseña maestra -->
+<!-- Una vez hecho esto, tenemos que dejar la configuración de instancia en default -->
+<!-- El almacenamiento también lo dejaremos en Default aunque en producción seria recomendable activar el escalado automático de almacenamiento (Actualmente
+aws viene con dicha opción activada) -->
+<!-- Ahora en conectividad, tenemos que elegir no se conecte a un recurso informático EC2 -->
+<!-- Dejamos el default VPC y justo debajo en acceso publico Si  -->
+<!-- En grupo de seguridad de VPC, crearemos uno nuevo el nombre que queramos-->
+<!-- Dejamos las autentificaciones de la base de datos en default (mediante password) -->
+<!-- Y la Supervision en default también -->
+<!-- Por ultimo dale al botón de crear base de datos -->
+<!-- Una vez hecho esto tendremos nuestra base de datos PostgreSQL de AWS creada y funcional -->
+
+<!-- Bien una vez hecho esto, ahora dentro de settings.py tendremos que modificar la base de datos en DATABASES -->
+<!-- En lugar de utilizar sqlite tendremos que cambiarla por PostreSQL -->
+<!-- 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'masteruser',
+        'PASSWORD': '12345678',
+        'HOST': 'w3-django-project.cdxmgq9zqqlr.us-east-1.rds.amazonaws.com',
+        'PORT': '5432'
+    }
+}
+    Tendremos que cambiar los datos USER, PASSWORD, HOST Y PORT por nuestros datos de la base de datos de AWS teniendo 
+    en cuenta que la base de datos todavía no tiene nombre, por lo que dejaremos postgres como NAME
+-->
+<!-- Una vez hayamos configurado nuestra base de datos dentro de settings.py tendremos que hacer una migración en nuestro entorno virtual -->
+<!-- py manage.py migrate -->
+<!-- Una vez hecho esto, podremos ejecutar el servidor y comprobar en nuestro navegador que carga los datos de la nueva base de datos correctamente -->
+<!-- Cabe destacar que esta vacía, vamos a rellenarla -->
+
+<!-- Para ello, primero tendremos que crear un superuser -->
+<!-- py manage.py createsuperuser -->
+<!-- En este caso crearemos uno de ejemplo -->
+<!-- Una vez creado el nuevo superusuario, podremos cargar nuevamente el servidor y en el panel de administración podremos acceder con dicho superusuario -->
+<!-- Dentro del panel de administración simplemente tenemos que acceder a usuarios y agregar usuarios de forma manual -->
+<!-- Una vez agregados tendremos dichos usuarios en /miembros tal y como lo teníamos antes en sqlite ¡Genial! -->

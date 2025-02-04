@@ -1,0 +1,75 @@
+<!-- Cuando creamos paginas web, probablemente terminemos añadiendo archivos estáticos en nuestra web, tales como imágenes o archivos css-->
+<!-- En este caso, tendremos que crear una carpeta llamada static dentro de nuestro proyecto de Django, en el mismo lugar donde creamos la carpeta templates -->
+<!-- Una vez creada la carpeta, podremos crear un archivo css dentro, por ejemplo -->
+<!-- Al crear e introducir diferentes estilos css, ahora tendremos que modificar el template para que cargue correctamente el estilo css -->
+
+<!-- Dentro del template deseado donde queramos introducir el estilo css, tendremos que introducir lo siguiente: -->
+<!-- {% load static %} En la parte superior del template -->
+<!-- <link rel="stylesheet" href="{% static 'elarchivo.css' %}"> Dentro de la etiqueta <head> -->
+<!-- De esta manera, el archivo css se cargará correctamente en la página web -->
+
+<!-- En el archivo settings.py podremos encontrar que tenemos DEBUG = True, esto nos sirve para aprender y trastear en Django menos cuando nos encontramos en producción -->
+<!-- En producción, tenemos que elegir que el DEBUG sea False, permitiendo el acceso a todos los hosts en este ejemplo, en un caso real, en lugar de poner '*' 
+tendríamos que poner el nombre real del dominio cuando hagamos el deploy del proyecto a un servidor publico -->
+<!-- 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+ALLOWED_HOSTS = ['*']
+-->
+
+<!-- Ahora bien, al cambiar a DEBUG = False podremos observar que ya no funcionara correctamente la visualización de los archivos en nuestro navegador -->
+<!-- Para poder continuar trabajando, vamos a instalar la librería whitenoise que nos permitirá trabajar con archivos estáticos -->
+<!-- En el CMD ejecutamos -->
+<!--
+pip install whitenoise
+-->
+<!-- Una vez instalado, tendremos que asegurarnos de que Django cargue correctamente la librería whitenoise -->
+<!-- Dentro de settings.py, podremos encontrar los MIDDLEWARE -->
+<!-- Aquí agregaremos la linea: -->
+<!-- 'whitenoise.middleware.WhiteNoiseMiddleware', -->
+
+<!-- Explicación de porque hacemos esto: -->
+<!-- Django no maneja automáticamente los archivos estáticos en el proyecto, como archivos css, JavaScript e imágenes, cuando DEBUG = False. -->
+<!-- Cuando DEBUG = True, esto funcionaba bien, ya que todo lo que teníamos que hacer era ponerlos en la carpeta static que habíamos creado -->
+<!-- Sin embargo, cuando DEBUG = False, los archivos estáticos deben recopilarse y colocarse en una carpeta específica antes de que podamos usarlos.-->
+<!-- Para ello, debemos recoger todos los archivos estáticos de nuestro proyecto dentro de una carpeta con el nombre que queramos -->
+<!-- Accedemos a settings.py y en el apartado donde podremos encontrar STATIC_URL, justo encima podremos introducir la siguiente linea: -->
+<!-- STATIC_ROOT = BASE_DIR / 'nombreDeLaCarpeta' -->
+<!-- Ahora bien, estarías pensando ahora tenemos que crear la carpeta de forma manual y mover todos los archivos dentro de la carpeta -->
+<!-- Pues déjame decirte querido amigo que ¡NO! Django es maravilloso y te hace este trabajo de forma automática -->
+<!-- Simplemente en el cmd ejecuta el siguiente código: -->
+<!-- py manage.py collectstatic -->
+
+<!-- De esta manera, Django recogerá todos los archivos estáticos y los colocará en la carpeta que hemos especificado en STATIC_ROOT -->
+<!-- Si te fijas te cogerá también todos los archivos estáticos del panel de admin de Django, ya que queremos utilizarlo en nuestros proyectos -->
+
+<!-- Bien ahora que hemos aprendido a cargar archivos estáticos dentro de la aplicación de nuestro proyecto de Django -->
+<!-- ¿Que pasaría si queremos que un estilo se mantenga entre diferentes aplicaciones? -->
+<!-- Pues bien, si queremos crear un fichero de estilo global para las diferentes aplicaciones dentro de nuestro proyecto de Django -->
+<!-- Tendremos que crear una nueva carpeta a nivel raíz del proyecto, esta carpeta puede llamarse como quieras -->
+<!-- Dentro de dicha carpeta, tendremos que crear un archivo css -->
+<!-- En este archivo css crearemos estilos css generales que se mantendrán entre nuestras aplicaciones de nuestro proyecto de Django -->
+<!-- Ahora bien, una vez hecho esto tendremos que acceder al fichero settings.py e introducir el siguiente código: -->
+<!--
+STATICFILES_DIRS = [
+    BASE_DIR / 'nombreDeLaCarpetaCreada'
+]
+-->
+<!-- En esta lista de STATICFILES_DIRS podremos añadir todas las rutas donde queramos que Django busque archivos estáticos para nuestras diferentes aplicaciones-->
+<!-- La palabra clave BASE_DIR representa el directorio raíz del proyecto y, junto con / "nombreDeLaCarpetaCreada", la carpeta creada en el directorio raíz -->
+
+<!-- Acto seguido, tendremos que cambiar dentro de templates alguna template para que cargue este estilo css general-->
+<!-- <link rel="stylesheet" href="{% static 'nombreDelFicheroDeEstilosGlobales.css' %}"> -->
+<!-- Ahora bien, si ejecutamos el servidor veremos que no carga correctamente los estilos css de nuestros estilos generales -->
+<!-- Esto es porque tendremos que recoger los archivos estáticos de nuevo -->
+<!-- py manage.py collectstatic -->
+<!-- Esto nos preguntara si queremos sobrescribir los archivos, decimos yes y entonces nos cargara el fichero estático nuevo -->
+<!-- Ejecutamos el servidor py manage.py runserver -->
+<!-- Y podremos observar que los estilos css se aplicaran correctamente desde el fichero de estilos generales -->
+
+<!-- Ahora vamos a crear un fichero css nuevo dentro de la carpeta de estilos generales -->
+<!-- Cargaremos dicho fichero dentro de la template master.html o maestro.html en mi caso -->
+<!-- Recogemos los archivos estáticos nuevamente y ejecutamos el servidor para ver los cambios -->
+<!-- Ahora que ha cargado correctamente es hora de desatar tu creatividad y crear estilos css atractivos para tu pagina web -->
+<!-- Acuérdate de que puedes editar las templates a gusto también teniendo en cuenta que ahora tenemos estilos generales para la pagina web -->

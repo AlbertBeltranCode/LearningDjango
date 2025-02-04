@@ -5,11 +5,11 @@ Detalles sobre: {{ mimiembro.Nombre }} {{ mimiembro.Apellido }}
 {% endblock %}
 
 {% block content %}
+<div class="mycard">
     <h1>{{ mimiembro.Nombre }} {{ mimiembro.Apellido }}</h1>
-
     <p>Telefono {{ mimiembro.telefono }}</p>
     <p>Miembro desde: {{ mimiembro.fecha_registro }}</p>
-
-    <p>Volver a <a href="/miembros">Miembros</a></p>
+    <p>Volver a lista de <a href="/miembros">miembros</a></p>
+</div>
 
 {% endblock %}
